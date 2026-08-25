@@ -1,0 +1,17 @@
+.build/
+dist/
+.DS_Store
+.env
+.env.*
+.zshrc
+.zshrc.*
+*.pem
+*.key
+*.p12
+*.mobileprovision
+*.log
+*.bak
+*backup*
+DerivedData/
+xcuserdata/
+.swiftpm/
