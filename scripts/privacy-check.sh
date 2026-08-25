@@ -54,7 +54,7 @@ for file in "${files[@]}"; do
     *.swift|*.md|*.sh|*.plist|*.yml|*.yaml|.gitignore|.githooks/*|scripts/*) ;;
     Resources/AppIcon.png|Resources/AppIcon.icns|Resources/AppIcon.iconset/*.png)
       scan_contents=0
-      if git rev-parse --verify HEAD >/dev/null 2>&1 && ! git diff --cached --quiet -- "$file"; then
+      if git cat-file -e "HEAD:$file" 2>/dev/null && ! git diff --cached --quiet -- "$file"; then
         report "binary asset changed; review metadata before allowing it" "$file"
       fi
       ;;
