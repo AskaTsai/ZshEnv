@@ -44,7 +44,7 @@ for file in "${files[@]}"; do
   scan_contents=1
 
   case "$file" in
-    .env|.env.*|.zshrc|.zshrc.*|*.pem|*.key|*.p12|*.mobileprovision|*.log|*.bak|*backup*|.DS_Store)
+    .env|.env.*|*/.env|*/.env.*|.zshrc|.zshrc.*|*/.zshrc|*/.zshrc.*|*.pem|*.key|*.p12|*.mobileprovision|*.log|*.bak|*backup*|.DS_Store)
       report "sensitive filename" "$file"
       continue
       ;;
