@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env bash
 set -euo pipefail
 
 mode="${1:-worktree}"
@@ -9,7 +9,7 @@ case "$mode" in
   staged) candidate_command=(git diff --cached --name-only -z --diff-filter=ACMR) ;;
   tracked) candidate_command=(git ls-files -z) ;;
   worktree) candidate_command=(git ls-files -co --exclude-standard -z) ;;
-  *) print -u2 -- "privacy-check: unsupported mode: $mode"; exit 2 ;;
+  *) printf '%s\n' "privacy-check: unsupported mode: $mode" >&2; exit 2 ;;
 esac
 
 typeset -a files
@@ -23,7 +23,7 @@ fi
 
 failed=0
 report() {
-  print -u2 -- "privacy-check: $1: $2"
+  printf '%s\n' "privacy-check: $1: $2" >&2
   failed=1
 }
 
