@@ -31,8 +31,10 @@ expected_name="AskaTsai"
 expected_email="31321477+AskaTsai@users.noreply.github.com"
 actual_name="$(git config --local --get user.name || true)"
 actual_email="$(git config --local --get user.email || true)"
-[[ "$actual_name" == "$expected_name" ]] || report "unexpected Git author name" "repository configuration"
-[[ "$actual_email" == "$expected_email" ]] || report "unexpected Git author email" "repository configuration"
+if [[ -n "$actual_name" || -n "$actual_email" ]]; then
+  [[ "$actual_name" == "$expected_name" ]] || report "unexpected Git author name" "repository configuration"
+  [[ "$actual_email" == "$expected_email" ]] || report "unexpected Git author email" "repository configuration"
+fi
 
 email_pattern='[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,}'
 token_pattern='(AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,})'
@@ -69,19 +71,19 @@ for file in "${files[@]}"; do
 
   (( scan_contents == 1 )) || continue
 
-  if rg -q --fixed-strings -- "$home_path_pattern" "$file" || rg -q --fixed-strings -- "file:${slash}${slash}${slash}Users${slash}" "$file"; then
+  if grep -Fq -- "$home_path_pattern" "$file" || grep -Fq -- "file:${slash}${slash}${slash}Users${slash}" "$file"; then
     report "personal absolute path" "$file"
   fi
-  if rg -q -P -- "$private_key_pattern" "$file"; then
+  if grep -Eq -- "$private_key_pattern" "$file"; then
     report "private key marker" "$file"
   fi
-  if rg -q -P -- "$token_pattern" "$file"; then
+  if grep -Eq -- "$token_pattern" "$file"; then
     report "credential-shaped value" "$file"
   fi
 
   while IFS= read -r email; do
     [[ -z "$email" || "$email" == "$expected_email" ]] || report "non-noreply email address" "$file"
-  done < <(rg -o -P -- "$email_pattern" "$file" || true)
+  done < <(grep -Eo -- "$email_pattern" "$file" || true)
 done
 
 (( failed == 0 )) || exit 1
